@@ -9,3 +9,33 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Margin {
+  id         Int @id @default(autoincrement())
+  barcode    Int
+  quantity   Int
+  revenue    Int
+  net_profit Int
+
+  @@index([barcode])
+}
+
+model Supply {
+  id       Int      @id @default(autoincrement())
+  barcode  Int
+  quantity Int
+  price    Int
+  time     DateTime
+
+  @@index([barcode, time], type: BTree)
+}
+
+model Sale {
+  id       Int      @id @default(autoincrement())
+  barcode  Int
+  quantity Int
+  price    Int
+  time     DateTime
+
+  @@index([barcode, time], type: BTree)
+}
