@@ -32,6 +32,9 @@ CREATE TABLE "Sale" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Margin_barcode_key" ON "Margin"("barcode");
+
+-- CreateIndex
 CREATE INDEX "Margin_barcode_idx" ON "Margin"("barcode");
 
 -- CreateIndex

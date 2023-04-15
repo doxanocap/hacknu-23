@@ -2,6 +2,8 @@ import { Supply } from "@prisma/client";
 
 import { createRM, getRM, updateRM } from "../../model/request.js";
 import prisma from "../../utils/prisma.js";
+import marginModel from "./margin.js";
+
 interface ISupplyRepo {
     select: (request: getRM) => Promise<Supply[]>;
     create: (requst: createRM) => Promise<Supply>;
@@ -32,23 +34,39 @@ const select = async (request: getRM): Promise<Supply[]> => {
 };
 
 const create = async (request: createRM): Promise<Supply> => {
-    return prisma.supply.create({
+    await marginModel.create(request, -1);
+    return await prisma.supply.create({
         data: {
             barcode: request.barcode,
             quantity: request.quantity,
             price: request.price,
-            time: request.supplyTime,
+            time: request.time,
         },
     });
 };
 
 const updateById = async (request: updateRM): Promise<Supply> => {
+    const prev = await selectById(request.id);
+    if (prev === null) {
+        throw { status: 404, message: "not found" };
+    }
+
+    const diff_price = request.price - prev.price;
+    const diff_qty = request.quantity - prev.quantity;
+
+    await marginModel.update({
+        id: 0,
+        barcode: request.barcode,
+        price: diff_price,
+        quantity: diff_qty,
+        time: new Date(),
+    });
+
     return prisma.supply.update({
         data: {
-            barcode: request.barcode,
             quantity: request.quantity,
             price: request.price,
-            time: request.supplyTime,
+            time: request.time,
         },
         where: {
             id: request.id,
@@ -57,6 +75,22 @@ const updateById = async (request: updateRM): Promise<Supply> => {
 };
 
 const deleteById = async (id: number): Promise<Supply> => {
+    const prev = await selectById(id);
+    if (prev === null) {
+        throw { status: 404, message: "not found" };
+    }
+
+    const diff_price = -prev.price;
+    const diff_qty = -prev.quantity;
+
+    await marginModel.update({
+        id: 0,
+        barcode: prev.barcode,
+        price: diff_price,
+        quantity: diff_qty,
+        time: new Date(),
+    });
+
     return prisma.supply.delete({
         where: {
             id: id,

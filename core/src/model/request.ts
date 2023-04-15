@@ -2,7 +2,7 @@ export interface createRM {
     barcode: number;
     price: number;
     quantity: number;
-    supplyTime: Date;
+    time: Date;
 }
 
 export interface updateRM {
@@ -10,7 +10,7 @@ export interface updateRM {
     barcode: number;
     price: number;
     quantity: number;
-    supplyTime: Date;
+    time: Date;
 }
 
 export interface getRM {

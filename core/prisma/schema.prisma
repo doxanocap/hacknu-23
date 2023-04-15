@@ -9,10 +9,10 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
+  
 model Margin {
   id         Int @id @default(autoincrement())
-  barcode    Int
+  barcode    Int @unique
   quantity   Int
   revenue    Int
   net_profit Int
