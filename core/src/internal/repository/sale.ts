@@ -1,6 +1,6 @@
 import { Sale } from "@prisma/client";
 import { createRM, getRM, updateRM } from "../../model/request.js";
-import prisma from "../../unitls/prisma.js";
+import prisma from "../../utils/prisma.js";
 interface ISaleRepo {
     select: (request: getRM) => Promise<Sale[]>;
     create: (requst: createRM) => Promise<Sale>;
