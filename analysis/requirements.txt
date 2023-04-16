@@ -1,0 +1,8 @@
+fastapi==0.95.1
+sqlalchemy==2.0.9
+psycopg2==2.9.6
+rocketry==2.5.1
+uvicorn==0.21.1
+mysqlclient==2.1.1
+pandas==2.0.0
+matplotlib==3.7.1
