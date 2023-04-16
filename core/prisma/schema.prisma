@@ -6,11 +6,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
-  
-model Margin {
+
+model margin {
   id         Int @id @default(autoincrement())
   barcode    Int @unique
   quantity   Int
@@ -20,7 +20,7 @@ model Margin {
   @@index([barcode])
 }
 
-model Supply {
+model supply {
   id       Int      @id @default(autoincrement())
   barcode  Int
   quantity Int
@@ -30,7 +30,7 @@ model Supply {
   @@index([barcode, time], type: BTree)
 }
 
-model Sale {
+model sale {
   id       Int      @id @default(autoincrement())
   barcode  Int
   quantity Int

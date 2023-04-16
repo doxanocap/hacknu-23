@@ -1,5 +1,5 @@
 export interface createRM {
-    barcode: number;
+    barcode: bigint;
     price: number;
     quantity: number;
     time: Date;
@@ -7,7 +7,7 @@ export interface createRM {
 
 export interface updateRM {
     id: number;
-    barcode: number;
+    barcode: bigint;
     price: number;
     quantity: number;
     time: Date;
@@ -16,5 +16,12 @@ export interface updateRM {
 export interface getRM {
     fromTime: Date;
     toTime: Date;
-    barcode: number;
+    barcode: bigint;
+}
+
+export interface updateMargin {
+    barcode: bigint,
+    net_profit: number;
+    revenue: number;
+    quantity: number;
 }

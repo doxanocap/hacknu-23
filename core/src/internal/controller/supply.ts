@@ -20,8 +20,6 @@ const InitSupplyController = (): ISupplyController => {
     };
 };
 
-
-
 const getByParams = async (req: Request, res: Response, next: NextFunction) => {
     const request: getRM = {
         fromTime: req.body.fromTime,
@@ -30,7 +28,7 @@ const getByParams = async (req: Request, res: Response, next: NextFunction) => {
     };
 
     const data = await supplyService.select(request);
-    res.status(200).send(data);
+    res.status(200).json(data);
 };
 
 const recordByParams = async (req: Request, res: Response) => {
@@ -38,15 +36,15 @@ const recordByParams = async (req: Request, res: Response) => {
         barcode: req.body.barcode,
         price: req.body.price,
         quantity: req.body.quantity,
-        supplyTime: req.body.supplyTime,
+        time: req.body.supplyTime,
     };
 
     const id = await supplyService.create(request);
-    if (id) {
+    if (id === null) {
         throw { status: 500, message: "unable to create" };
     }
 
-    res.status(200).send(id);
+    res.status(200).json(id);
 };
 
 const updateById = async (req: Request, res: Response) => {
@@ -55,7 +53,7 @@ const updateById = async (req: Request, res: Response) => {
         barcode: req.body.barcode,
         price: req.body.price,
         quantity: req.body.quantity,
-        supplyTime: req.body.supplyTime,
+        time: req.body.supplyTime,
     };
 
     await supplyService.updateById(request);
@@ -63,19 +61,24 @@ const updateById = async (req: Request, res: Response) => {
 };
 
 const deleteById = async (req: Request, res: Response, next: NextFunction) => {
-    const id = parseInt(req.query.id as string);
+    const id = parseInt(req.params.id as string);
+
     await supplyService.deleteById(id);
     res.status(200).send();
 };
 
 const getById = async (req: Request, res: Response, next: NextFunction) => {
-    const id = parseInt(req.query.id as string);
+    const id = parseInt(req.params.id as string);
     const data = await supplyService.deleteById(id);
 
     if (data === null) {
         throw { status: 404, message: "not found" };
     }
-    res.status(200).send(data);
+    res.status(200).send(JSON.stringify(data));
+};
+
+const bigIntToStr = (key: any, value: any) => {
+    typeof value === "bigint" ? value.toString() + "n" : value;
 };
 
 export default InitSupplyController();

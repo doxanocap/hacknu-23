@@ -9,7 +9,13 @@ const InitSaleService = () => {
     };
 };
 const select = async (request) => {
-    return await saleModel.select(request);
+    if (request.fromTime.toString() === "" &&
+        request.toTime.toString() === "") {
+        request.fromTime = new Date(0);
+        request.toTime = new Date();
+    }
+    const data = await saleModel.select(request);
+    return convertType(data);
 };
 const create = async (request) => {
     const data = await saleModel.create(request);
@@ -25,6 +31,20 @@ const deleteById = async (id) => {
 };
 const selectById = async (id) => {
     return saleModel.selectById(id);
+};
+const convertType = (data) => {
+    const res = [];
+    data.forEach((item) => {
+        const temp = {
+            id: item.id,
+            barcode: item.barcode.toString(),
+            price: item.price,
+            quantity: item.quantity,
+            time: item.time,
+        };
+        res.push(temp);
+    });
+    return res;
 };
 export default InitSaleService();
 //# sourceMappingURL=sale.js.map

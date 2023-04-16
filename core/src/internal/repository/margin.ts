@@ -1,11 +1,12 @@
 import { Margin } from "../../model/market.js";
-import { createRM, updateRM } from "../../model/request.js";
+import { createRM, updateMargin } from "../../model/request.js";
 import prisma from "../../utils/prisma.js";
 
 interface IMarginRepo {
     insert: (request: createRM, isPositive: number) => Promise<void>;
     create: (request: createRM, isPositive: number) => Promise<void>;
-    update: (request: updateRM) => Promise<void>;
+    update: (request: updateMargin) => Promise<void>;
+    findByBarcode: (barcode: bigint) => Promise<Margin | null>;
 }
 
 const InitMarginRepo = (): IMarginRepo => {
@@ -13,6 +14,7 @@ const InitMarginRepo = (): IMarginRepo => {
         insert: insert,
         create: create,
         update: update,
+        findByBarcode: findByBarcode,
     };
 };
 
@@ -38,31 +40,31 @@ const insert = async (request: createRM, isPositive: number): Promise<void> => {
 };
 
 const create = async (request: createRM, isPositive: number): Promise<void> => {
-    const total = isPositive * request.price * request.quantity;
+    const prev = await findByBarcode(request.barcode);
+    if (prev !== null) {
+        return;
+    }
+
+    const qty = isPositive > 0 ? request.quantity : 0;
+    const total_net = isPositive * request.price * request.quantity;
+    const total_revenue = isPositive > 0 ? total_net : 0;
+
     await prisma.margin.create({
         data: {
             barcode: request.barcode,
-            quantity: request.quantity,
-            revenue: total,
-            net_profit: total,
+            quantity: qty,
+            revenue: total_revenue,
+            net_profit: total_net,
         },
     });
 };
 
-const update = async (request: updateRM): Promise<void> => {
-    const prev = await findByBarcode(request.barcode);
-    if (prev === null) {
-        throw { status: 404, message: "not found" };
-    }
-
-    const diff_price = prev?.revenue + request.price;
-    const diff_qty = prev?.quantity + request.quantity;
-
+const update = async (request: updateMargin): Promise<void> => {
     await prisma.margin.update({
         data: {
-            quantity: diff_qty,
-            revenue: prev?.revenue + diff_price,
-            net_profit: prev?.net_profit + diff_price,
+            quantity: request.quantity,
+            revenue: request.revenue,
+            net_profit: request.net_profit,
         },
         where: {
             barcode: request.barcode,
@@ -70,7 +72,7 @@ const update = async (request: updateRM): Promise<void> => {
     });
 };
 
-const findByBarcode = async (barcode: number): Promise<Margin | null> => {
+const findByBarcode = async (barcode: bigint): Promise<Margin | null> => {
     return await prisma.margin.findUnique({
         where: {
             barcode: barcode,
