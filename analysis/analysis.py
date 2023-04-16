@@ -38,7 +38,7 @@ def data_analysis(connection_string):
     plt.ylabel('Profit')
     plt.title('Profit by Barcode')
     plt.xticks(df.index, df['barcode'], rotation=90)  # set xticks to barcode column
-    plt.savefig('profit_plot.png')  # save plot as image
+    plt.savefig('static/profit_plot.png')  # save plot as image
 
     # Create a bar chart for total_sales column
     plt.bar(df.index, df['total_sales'], color='blue')
@@ -46,7 +46,7 @@ def data_analysis(connection_string):
     plt.ylabel('Number of Items Sold')
     plt.title('Number of Items Sold by Barcode')
     plt.xticks(df.index, df['barcode'], rotation=90)  # set xticks to barcode column
-    plt.savefig('total_sales_plot.png')  # save plot as image
+    plt.savefig('static/total_sales_plot.png')  # save plot as image
 
     # Create a bar chart for roi column
     plt.bar(df.index, df['roi'], color='green')
@@ -54,5 +54,5 @@ def data_analysis(connection_string):
     plt.ylabel('ROI')
     plt.title('ROI by Barcode')
     plt.xticks(df.index, df['barcode'], rotation=90)  # set xticks to barcode column
-    plt.savefig('roi_plot.png')  # save plot as image
+    plt.savefig('static/roi_plot.png')  # save plot as image
     return ('profit_plot.png', 'total_sales_plot.png', 'roi_plot.png')

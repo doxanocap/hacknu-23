@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from analysis import data_analysis
 from database import DATABASE_URL
 import math
+from fastapi.responses import HTMLResponse
 from scheduler import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy import func, and_
@@ -64,9 +65,14 @@ def home(barcode: str, fromTime: str, toTime: str, db: Session = Depends(get_db)
 @app.get("/analysis/")
 def analysis(background: BackgroundTasks):
     a, b, c = data_analysis(DATABASE_URL)
-    background.add_task(os.remove, a)
-    background.add_task(os.remove, b)
-    background.add_task(os.remove, c)
+    background.add_task(os.remove, f"static/{a}")
+    background.add_task(os.remove, f"static/{b}")
+    background.add_task(os.remove, f"static/{c}")
+    return HTMLResponse(f"""
+    <img src="{{ url_for('static', path='{a}') }}" alt="" width="30" height="24">
+    <img src="{{ url_for('static', path='{b}') }}" alt="" width="30" height="24">
+    <img src="{{ url_for('static', path='{c}') }}" alt="" width="30" height="24">
+    """)
 
 
 @app.post("/make/")
