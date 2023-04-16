@@ -2,13 +2,13 @@
 
 ### Run project
 
+```
+docker-compose up
+```
+
 ### Run core 
 ```
 npm i
 cd core
 npx run dev
-```
-
-```
-docker-compose up
 ```
